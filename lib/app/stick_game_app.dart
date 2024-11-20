@@ -12,8 +12,14 @@ class StickGameApp extends FlameGame{
 
   @override
   Future<void>? onLoad() async {
-    canvasPath.addRRect(Rect.fromLTWH(0,0,canvasSize.x,Canvas))
+    canvasPath.addRect(Rect.fromLTWH(0,0,canvasSize.x,canvasSize.y));
     return super.onLoad();
 
+  }
+
+  @override
+  void render(Canvas canvas){
+    super.render(canvas);
+    canvas.drawPath(canvasPath, paint);
   }
 }
