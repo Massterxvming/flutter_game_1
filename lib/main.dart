@@ -1,9 +1,10 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game_1/app/game_app.dart';
+import 'package:flutter_game_1/app/stick_game_app.dart';
 
 void main() {
-  final GameApp gameApp = GameApp();
+  final StickGameApp gameApp = StickGameApp();
   runApp(GameWidget(game:gameApp));
 }
 
