@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_game_1/modules/target_compontent.dart';
 
@@ -11,10 +12,14 @@ class StickGameApp extends FlameGame with DragCallbacks {
 
   //角色
   late TargetCompontent targetCompontent;
+  bool _pointOnTarget = false;
+  
+  //安全距离
+  // double safeTop = MediaQuery.of(context).padding.top;
+
 
   @override
   Future<void>? onLoad() async {
-    print('game is loading...');
     canvasPath.addRect(Rect.fromLTWH(0, 0, canvasSize.x, canvasSize.y));
 
     // ignore: dead_code
@@ -33,37 +38,53 @@ class StickGameApp extends FlameGame with DragCallbacks {
   }
 
   @override
+  void update(double dt) {
+    super.update(dt);
+  }
+
+  @override
   void onDragStart(DragStartEvent event) {
-    // TODO: implement onDragStart
-    print('on Start Dragging');
+    print('on Start Dragging:${event.canvasPosition}');
     // print(targetCompontent.path.transform(matrix4));
-    print(targetCompontent.position);
-    print('event point position:${event.devicePosition}');
-    double distance = event.devicePosition.distanceTo(targetCompontent.position);
-    if(distance<=20){
+    double distance =
+        event.canvasPosition.distanceTo(targetCompontent.position);
+    if (distance <= 20) {
+      _pointOnTarget = true;
       print('点中目标');
+    }
+    else{
+      _pointOnTarget = false;
     }
     super.onDragStart(event);
   }
 
   @override
   void onDragCancel(DragCancelEvent event) {
-    // TODO: implement onDragCancel
     // print('on Cancel Dragging');
     super.onDragCancel(event);
   }
 
   @override
   void onDragEnd(DragEndEvent event) {
-    // TODO: implement onDragEnd
     // print('on End Dragging');
     super.onDragEnd(event);
   }
 
   @override
   void onDragUpdate(DragUpdateEvent event) {
-    // TODO: implement onDragUpdate
     // print('on Update Dragging');
     super.onDragUpdate(event);
+    if (event.canvasStartPosition.x < targetCompontent.radius ||
+        event.canvasStartPosition.x > canvasSize.x - targetCompontent.radius ||
+        event.canvasStartPosition.y < targetCompontent.radius ||
+        event.canvasStartPosition.y > canvasSize.y - targetCompontent.radius) {
+      print('触摸区域超出界限');
+      return;
+    }
+    if (isDragged&&_pointOnTarget) {
+      targetCompontent.position.add(event.canvasDelta);
+      print('正在拖拽');
+    }
+    // targetCompontent.onDragUpdate(event);
   }
 }
